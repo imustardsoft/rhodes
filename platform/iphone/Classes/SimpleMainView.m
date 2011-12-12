@@ -92,10 +92,6 @@ static BOOL makeHiddenUntilLoadContent = YES;
 	makeHiddenUntilLoadContent = NO;
 }
 
-+ (void) enableHiddenOnStart {
-	makeHiddenUntilLoadContent = YES;
-}
-
 -(CGRect)getContentRect {
 	if (nativeViewView != nil) {
 		return nativeViewView.frame;
@@ -971,6 +967,18 @@ static BOOL makeHiddenUntilLoadContent = YES;
             
             if ([name isEqualToString:@"rho_open_target"] && [value isEqualToString:@"_blank"]) {
                 external = YES;
+                
+                NSString *urlStr = [url absoluteString];
+                
+                NSString *rhoOpenTargetStr = @"rho_open_target=_blank";
+                
+                NSRange searchResult = [urlStr rangeOfString:rhoOpenTargetStr];             
+                if(searchResult.location != NSNotFound){
+                    NSRange replaceOpenTargetrange = NSMakeRange(searchResult.location - 1, rhoOpenTargetStr.length + 1);
+                    NSString *replaceOpenTargetStr = [urlStr substringWithRange:replaceOpenTargetrange];
+                    urlStr = [urlStr stringByReplacingOccurrencesOfString:replaceOpenTargetStr withString:@""];
+                    url = [NSURL URLWithString:urlStr];              
+                }
                 break;
             }
         }
